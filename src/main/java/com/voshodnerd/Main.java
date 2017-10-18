@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.voshodnerd;
 
-package com.example;
-
+import com.voshodnerd.entity.Datas;
+import com.voshodnerd.repository.DatazRepository;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,28 +33,50 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import org.springframework.ui.Model;
 
 @Controller
 @SpringBootApplication
 public class Main {
 
-  @Value("${spring.datasource.url}")
-  private String dbUrl;
+    @Autowired
+    private DatazRepository datazRepository;
 
-  @Autowired
-  private DataSource dataSource;
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(Main.class, args);
+    }
 
-  public static void main(String[] args) throws Exception {
-    SpringApplication.run(Main.class, args);
-  }
+    @RequestMapping("/")
+    String index() {
+        return "index";
+    }
 
-  @RequestMapping("/")
-  String index() {
-    return "index";
-  }
+    @RequestMapping("/about")
+    String about() {
+        return "about";
+    }
 
-  @RequestMapping("/db")
+    @RequestMapping("/howtowork")
+    String howToWork() {
+        return "howtowork";
+    }
+
+    @RequestMapping("/register")
+    String register() {
+        return "register";
+    }
+
+    @RequestMapping("/test")
+    String test(Model model) {
+        List<Datas> ls = datazRepository.findAll();
+        model.addAttribute("datas", ls);
+        return "test";
+    }
+
+    /*@RequestMapping("/db")
   String db(Map<String, Object> model) {
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
@@ -72,17 +95,21 @@ public class Main {
       model.put("message", e.getMessage());
       return "error";
     }
-  }
+  }*/
+ /*@Bean
+    public DataSource dataSource() throws SQLException {
+        if (dbUrl == null || dbUrl.isEmpty()) {
+            return new HikariDataSource();
+        } else {
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl(dbUrl);
+            config.setUsername(dbUser);
+            config.setPassword(dbPassword);
+           // config.addDataSourceProperty("user", dbUser);
+           // config.addDataSourceProperty("password", dbPassword);
 
-  @Bean
-  public DataSource dataSource() throws SQLException {
-    if (dbUrl == null || dbUrl.isEmpty()) {
-      return new HikariDataSource();
-    } else {
-      HikariConfig config = new HikariConfig();
-      config.setJdbcUrl(dbUrl);
-      return new HikariDataSource(config);
+            return new HikariDataSource(config);
+        }
     }
-  }
-
+     */
 }
